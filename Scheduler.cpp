@@ -18,14 +18,14 @@ void Scheduler::Init() {
     //      Get the memory of the machine
     //      Get the number of CPUs
     //      Get if there is a GPU or not
-    // 
+    //
     SimOutput("Scheduler::Init(): Total number of machines is " + to_string(Machine_GetTotal()), 3);
     SimOutput("Scheduler::Init(): Initializing scheduler", 1);
     for(unsigned i = 0; i < active_machines; i++)
-        vms.push_back(VM_Create(LINUX, X86));
+        vms.push_back(VM_Create(LINUX, ARM));
     for(unsigned i = 0; i < active_machines; i++) {
         machines.push_back(MachineId_t(i));
-    }    
+    }
     for(unsigned i = 0; i < active_machines; i++) {
         VM_Attach(vms[i], machines[i]);
     }
@@ -53,7 +53,7 @@ void Scheduler::NewTask(Time_t now, TaskId_t task_id) {
     //  RequiredVMType(task_id);
     //  RequiredSLA(task_id);
     //  RequiredCPUType(task_id);
-    // Decide to attach the task to an existing VM, 
+    // Decide to attach the task to an existing VM,
     //      vm.AddTask(taskid, Priority_T priority); or
     // Create a new VM, attach the VM to a machine
     //      VM vm(type of the VM)
@@ -101,7 +101,7 @@ void Scheduler::TaskComplete(Time_t now, TaskId_t task_id) {
 
 // Public interface below
 
-static Scheduler Scheduler;
+static class Scheduler Scheduler;
 
 void InitScheduler() {
     SimOutput("InitScheduler(): Initializing scheduler", 4);
@@ -111,6 +111,7 @@ void InitScheduler() {
 void HandleNewTask(Time_t time, TaskId_t task_id) {
     SimOutput("HandleNewTask(): Received new task " + to_string(task_id) + " at time " + to_string(time), 4);
     Scheduler.NewTask(time, task_id);
+    Scheduler.n_tasks_requested++;
 }
 
 void HandleTaskCompletion(Time_t time, TaskId_t task_id) {
@@ -120,7 +121,8 @@ void HandleTaskCompletion(Time_t time, TaskId_t task_id) {
 
 void MemoryWarning(Time_t time, MachineId_t machine_id) {
     // The simulator is alerting you that machine identified by machine_id is overcommitted
-    SimOutput("MemoryWarning(): Overflow at " + to_string(machine_id) + " was detected at time " + to_string(time), 0);
+    // SimOutput("MemoryWarning(): Overflow at " + to_string(machine_id) + " was detected at time " + to_string(time), 0);
+    Scheduler.n_memory_warnings++;
 }
 
 void MigrationDone(Time_t time, VMId_t vm_id) {
@@ -150,16 +152,18 @@ void SimulationComplete(Time_t time) {
     cout << "SLA2: " << GetSLAReport(SLA2) << "%" << endl;     // SLA3 do not have SLA violation issues
     cout << "Total Energy " << Machine_GetClusterEnergy() << "KW-Hour" << endl;
     cout << "Simulation run finished in " << double(time)/1000000 << " seconds" << endl;
+    cout << "Tasks requested: " << Scheduler.n_tasks_requested << endl;
+    cout << "SLA violations: " << Scheduler.n_sla_violations << endl;
+    cout << "Memory warnings: " << Scheduler.n_memory_warnings << endl;
     SimOutput("SimulationComplete(): Simulation finished at time " + to_string(time), 4);
-    
+
     Scheduler.Shutdown(time);
 }
 
 void SLAWarning(Time_t time, TaskId_t task_id) {
-    
+    Scheduler.n_sla_violations++;
 }
 
 void StateChangeComplete(Time_t time, MachineId_t machine_id) {
     // Called in response to an earlier request to change the state of a machine
 }
-

@@ -2,7 +2,7 @@ machine class:
 {
 # comment
         Number of machines: 16
-        CPU type: X86
+        CPU type: ARM
         Number of cores: 8
         Memory: 16384
         S-States: [120, 100, 100, 80, 40, 10, 0]
@@ -33,9 +33,7 @@ task class:
         VM type: LINUX
         GPU enabled: no
         SLA type: SLA0
-        CPU type: X86
+        CPU type: ARM
         Task type: WEB
         Seed: 520230
 }
-
-

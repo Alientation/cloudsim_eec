@@ -21,6 +21,9 @@ public:
     void PeriodicCheck(Time_t now);
     void Shutdown(Time_t now);
     void TaskComplete(Time_t now, TaskId_t task_id);
+    size_t n_sla_violations;
+    size_t n_memory_warnings;
+    size_t n_tasks_requested;
 private:
     vector<VMId_t> vms;
     vector<MachineId_t> machines;
