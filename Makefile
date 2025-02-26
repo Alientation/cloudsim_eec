@@ -30,5 +30,5 @@ $(TARGET): $(OBJ)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 # Clean up build files
-clean:
-	rm -f $(OBJ) $(TARGET)
+# clean:
+# 	rm -f $(OBJ) $(TARGET)
