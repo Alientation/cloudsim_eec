@@ -25,75 +25,119 @@
 
 
 # Rented out high performance machines with many cores to increase throughput.
-# Speed makes up for the high power usage. Memory used for each core is
-# likely not large since the network is the bottleneck. However it is
-# possible that frequently accessed content are cached to reduce disk usage.
-# Giving a fair 1 GB of memory per core.
-
+# Speed makes up for the high power usage.
+#
+# Specs:
+#       Max Power Consumption: 2228 W/h
+#       MIPS/Power: 63.2
 machine class:
 {
         Number of machines: 2
         CPU type: X86
-        Number of cores: 32
-        Memory: 32768
+        Number of cores: 64
+        Memory: 65536
         S-States: [180, 120, 120, 90, 50, 15, 0]
         P-States: [20, 15, 10, 5]
         C-States: [12, 4, 2, 0]
-        MIPS: [4000, 2800, 1800, 600]
+        MIPS: [2200, 1500, 1000, 500]
         GPUs: no
 }
 
-# Loaned to them by a friend
+# POWER8 borrowed from a friend.
+#
+# Specs:
+#       Map Power Consumption: 316
+#       MIPS/Power: 30.4
 machine class:
 {
         Number of machines: 1
         CPU type: POWER
-        Number of cores: 16
-        Memory: 8192
-        S-States: [120, 100, 100, 80, 40, 10, 0]
-        P-States: [12, 8, 6, 4]
+        Number of cores: 6
+        Memory: 16384
+        S-States: [160, 110, 110, 85, 45, 12, 0]
+        P-States: [14, 10, 7, 4]
         C-States: [12, 3, 1, 0]
         MIPS: [1600, 1200, 800, 400]
         GPUs: yes
 }
 
+# Some Raspberry Pi Pico 2 (RP2350) purchased to support RISCV requests.
+#
+# Specs:
+#       Map Power Consumption: 24
+#       MIPS/Power: 41.7
+machine class:
+{
+        Number of machines: 8
+        CPU type: RISCV
+        Number of cores: 2
+        Memory: 520
+        S-States: [8, 6, 6, 4, 2, 1, 0]
+        P-States: [5, 3, 2, 1]
+        C-States: [3, 2, 1, 0]
+        MIPS: [1000, 600, 300, 150]
+        GPUs: no
+}
 
-# General machines with few cores. Apple M1 MacBook Air Laptops bought in at
-# sharp discount from people upgrading to M4. To simulate the 4 performance and
+
+# General machines with few cores. Apple M1 MacBook Air Laptops bought at
+# sharp discount from people upgrading to M3. To simulate the 4 performance and
 # 4 efficiency cores, two separate machines are used.
-# Spec for 'laptop' in whole (will be split across the cores)
-#       - 16 GB memory, split so 10 GB goes to performance, 6 to efficiency
-#       - 200 Watt max power usage (according to online sources its 50, but
-#       since we 'split' it across to two machines, 100 is easier to play with)
-#       - 3.2 GHz for performance, 2 GHz for efficiency
-
-# Performance core
+# Performance cores
+#
+# Specs:
+#       Map Power Consumption: 200 W/h
+#       MIPS/Power: 28
 machine class:
 {
         Number of machines: 8
         Number of cores: 4
         CPU type: ARM
         Memory: 10240
-        S-States: [20, 15, 15, 12, 6, 2, 0]
-        P-States: [16, 12, 6, 4]
-        C-States: [12, 3, 1, 0]
-        MIPS: [3200, 2000, 1200, 600]
+        S-States: [120, 100, 100, 80, 40, 10, 0]
+        P-States: [12, 10, 6, 4]
+        C-States: [8, 4, 1, 0]
+        MIPS: [1400, 1000, 700, 300]
         GPUs: yes
 }
 
-# Efficiency core
+# Efficiency cores
+#
+# Specs:
+#       Map Power Consumption: 146 W/h
+#       MIPS/Power: 24.7
 machine class:
 {
         Number of machines: 8
         Number of cores: 4
         CPU type: ARM
         Memory: 6144
-        S-States: [12, 8, 8, 6, 2, 1, 0]
+        S-States: [90, 70, 70, 50, 25, 10, 0]
         P-States: [8, 6, 4, 2]
         C-States: [6, 3, 1, 0]
-        MIPS: [2000, 1200, 800, 400]
+        MIPS: [900, 600, 400, 200]
         GPUs: no
 }
+
+# Some standard X86 machines that have lower max power usage compared to those
+# high performance machines.
+#
+# Specs:
+#       Map Power Consumption: 232 W/h
+#       MIPS/Power: 31
+machine class:
+{
+        Number of machines: 4
+        CPU type: X86
+        Number of cores: 8
+        Memory: 16384
+        S-States: [120, 100, 100, 80, 40, 10, 0]
+        P-States: [8, 6, 4, 2]
+        C-States: [6, 3, 1, 0]
+        MIPS: [900, 600, 400, 200]
+        GPUs: yes
+}
+
 
 # Tasks
 # Streaming Daily load spike
