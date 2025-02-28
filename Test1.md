@@ -21,7 +21,19 @@
 #       Not sure what are reasonable energy usages for S, P, and C states. Adjusted
 #       from sample to represent the performance difference between the machine
 #       classes.
-
+#
+#
+#       TOTAL CORES/COMPUTE (MIPS)
+#               X86: 160 (310,400)
+#               ARM: 64 (73,600)
+#               POWER: 6 (9,600)
+#               RISCV: 16 (16,000)
+#
+#       TOTAL/MAX MEMORY (MB)
+#               X86: 196,608 (MAX 65,536)
+#               ARM: 131,072 (MAX 10,240)
+#               POWER: 16,384 (MAX 16,384)
+#               RISCV: 4160 (MAX 520)
 
 
 # Rented out high performance machines with many cores to increase throughput.
@@ -140,20 +152,59 @@ machine class:
 
 
 # Tasks
-# Streaming Daily load spike
+# Goal is to keep total concurrent tasks on a single cpu type to under the
+# total cores of that cpu type.
+
+
+# Streaming Daily Load Spike
+# TOTAL COUNT: 6,250
+# AVG PEAK CONCURRENT TASKS: 50
+# AVG PEAK MEMORY USAGE (MB): 12,800
 task class:
 {
         Start time: 1000000
         End time : 6000000
-        Inter arrival: 400
+        Inter arrival: 800
         Expected runtime: 40000
-        Memory: 32
+        Memory: 256
         VM type: LINUX
         GPU enabled: no
         SLA type: SLA0
-        CPU type: ARM
+        CPU type: X86
         Task type: STREAM
         Seed: 0
+}
+
+task class:
+{
+        Start time: 1000000
+        End time : 3000000
+        Inter arrival: 400
+        Expected runtime: 40000
+        Memory: 256
+        VM type: LINUX_RT
+        GPU enabled: no
+        SLA type: SLA0
+        CPU type: X86
+        Task type: STREAM
+        Seed: 1
+}
+
+# Employee Toomaz, who teaches a Python-Based Operating Systems course on the side, running his student's final projects on the POWER machine
+# He is on a strict deadline, as grades are due tonight.
+task class:
+{
+        Start time: 500000
+        End time : 550000
+        Inter arrival: 1000000
+        Expected runtime: 30000000000
+        Memory: 8192
+        VM type: POWER
+        GPU enabled: yes
+        SLA type: SLA1
+        CPU type: POWER
+        Task type: HPC
+        Seed: 11100742
 }
 
 # Average Streaming through out day
