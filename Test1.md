@@ -150,83 +150,113 @@ machine class:
         GPUs: yes
 }
 
+#
+# TASKS
+#
 
-# Tasks
-# Goal is to keep total concurrent tasks on a single cpu type to under the
-# total cores of that cpu type.
-
-
-# Streaming Daily Load Spike
-# TOTAL COUNT: 6,250
-# AVG PEAK CONCURRENT TASKS: 50
-# AVG PEAK MEMORY USAGE (MB): 12,800
+# Average Daily Streaming (200-600s)
 task class:
 {
-        Start time: 1000000
-        End time : 6000000
-        Inter arrival: 800
-        Expected runtime: 40000
-        Memory: 256
+        Start time: 200000000
+        End time : 600000000
+        Inter arrival: 100000
+        Expected runtime: 5000000
+        Memory: 4060
         VM type: LINUX
-        GPU enabled: no
+        GPU enabled: yes
         SLA type: SLA0
         CPU type: X86
         Task type: STREAM
         Seed: 0
 }
 
+# One sporadic request for a Windows VM (0-1000s)
+# VM should shutdown right the task is completed
 task class:
 {
-        Start time: 1000000
-        End time : 3000000
-        Inter arrival: 400
-        Expected runtime: 40000
-        Memory: 256
-        VM type: LINUX_RT
+        Start time: 0
+        End time : 1000000000
+        Inter arrival: 100000000
+        Expected runtime: 5000000
+        Memory: 15025
+        VM type: WIN
         GPU enabled: no
-        SLA type: SLA0
+        SLA type: SLA1
         CPU type: X86
         Task type: STREAM
         Seed: 1
 }
 
-# Employee Toomaz, who teaches a Python-Based Operating Systems course on the side, running his student's final projects on the POWER machine
-# He is on a strict deadline, as grades are due tonight.
+# Small period in the middle where Windows VM is heavily used, should
+# create more Windows VMs to support
 task class:
 {
-        Start time: 500000
-        End time : 550000
-        Inter arrival: 1000000
-        Expected runtime: 30000000000
-        Memory: 8192
-        VM type: POWER
+        Start time: 500000000
+        End time : 600000000
+        Inter arrival: 50000
+        Expected runtime: 10000000
+        Memory: 1425
+        VM type: WIN
+        GPU enabled: no
+        SLA type: SLA3
+        CPU type: X86
+        Task type: STREAM
+        Seed: 2
+}
+
+task class:
+{
+        Start time: 400000000
+        End time : 500000000
+        Inter arrival: 50000
+        Expected runtime: 10000000
+        Memory: 1425
+        VM type: WIN
         GPU enabled: yes
         SLA type: SLA1
-        CPU type: POWER
-        Task type: HPC
-        Seed: 11100742
-}
-
-# Average Streaming through out day
-task class:
-{
-        Start time: 0
-        End time : 10000000
-        Inter arrival: 2400
-        Expected runtime: 120000
-        Memory: 256
-        VM type: LINUX
-        GPU enabled: no
-        SLA type: SLA0
         CPU type: ARM
         Task type: STREAM
-        Seed: 1
+        Seed: 2
 }
 
+# Create some extra demand for Linux RT (200-800s)
 task class:
 {
-        Start time: 500000
-        End time : 10000000
+        Start time: 200000000
+        End time : 800000000
+        Inter arrival: 200000
+        Expected runtime: 5000000
+        Memory: 5020
+        VM type: LINUX_RT
+        GPU enabled: yes
+        SLA type: SLA0
+        CPU type: X86
+        Task type: STREAM
+        Seed: 3
+}
+
+# Linux RT but without GPU enabled, less priority (200-500s)
+task class:
+{
+        Start time: 200000000
+        End time : 500000000
+        Inter arrival: 2500000
+        Expected runtime: 4000000
+        Memory: 2005
+        VM type: LINUX_RT
+        GPU enabled: no
+        SLA type: SLA1
+        CPU type: X86
+        Task type: STREAM
+        Seed: 4
+}
+
+
+# Some similar requests for ARM processors at the beginning. (50-400s)
+task class:
+{
+        Start time: 50000000
+        End time : 400000000
         Inter arrival: 1000000
         Expected runtime: 20000000
         Memory: 2048
@@ -235,5 +265,104 @@ task class:
         SLA type: SLA0
         CPU type: ARM
         Task type: STREAM
-        Seed: 2
+        Seed: 5
+}
+
+task class:
+{
+        Start time: 100000000
+        End time : 300000000
+        Inter arrival: 500000
+        Expected runtime: 10000000
+        Memory: 2048
+        VM type: LINUX_RT
+        GPU enabled: no
+        SLA type: SLA1
+        CPU type: ARM
+        Task type: STREAM
+        Seed: 6
+}
+
+# Employee Toomaz, who teaches a Python-Based Operating Systems course on the side,
+# running his student's final projects on the POWER machine. He is on a strict
+# deadline, as grades are due tonight.
+task class:
+{
+        Start time: 0
+        End time : 60000000
+        Inter arrival: 10000000
+        Expected runtime: 9000000
+        Memory: 7050
+        VM type: AIX
+        GPU enabled: yes
+        SLA type: SLA1
+        CPU type: POWER
+        Task type: HPC
+        Seed: 11100742
+}
+
+# Some person tries to interfere with the grading
+task class:
+{
+        Start time: 0
+        End time : 10000000
+        Inter arrival: 250000
+        Expected runtime: 4000000
+        Memory: 100
+        VM type: AIX
+        GPU enabled: no
+        SLA type: SLA0
+        CPU type: POWER
+        Task type: HPC
+        Seed: 7
+}
+
+
+# Some person tries mining some crypto, little do they know they are running
+# on a raspberry pi.
+task class:
+{
+        Start time: 0
+        End time : 100000
+        Inter arrival: 12000
+        Expected runtime: 100000000
+        Memory: 220
+        VM type: LINUX
+        GPU enabled: no
+        SLA type: SLA0
+        CPU type: RISCV
+        Task type: CRYPTO
+        Seed: 10
+}
+
+# Testing some RISCV stuff, should cause some rearranging of tasks/vms
+task class:
+{
+        Start time: 0
+        End time : 200000
+        Inter arrival: 10000
+        Expected runtime: 50000
+        Memory: 500
+        VM type: LINUX_RT
+        GPU enabled: no
+        SLA type: SLA1
+        CPU type: RISCV
+        Task type: CRYPTO
+        Seed: 8
+}
+
+# Hostin game server
+task class:
+{
+        Start time: 350000
+        End time : 450000
+        Inter arrival: 30000
+        Expected runtime: 40000000
+        Memory: 250
+        VM type: LINUX
+        GPU enabled: no
+        SLA type: SLA1
+        CPU type: RISCV
+        Task type: WEB
+        Seed: 9
 }

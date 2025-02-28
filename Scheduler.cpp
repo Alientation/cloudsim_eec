@@ -77,21 +77,36 @@ void Scheduler::NewTask(Time_t now, TaskId_t task_id) {
     // }// Skeleton code, you need to change it according to your algorithm
 
     VMId_t best_vm;
-    bool found = false;
+    VMId_t possible_vm;
+    bool found_possible = false;
+    bool found_best = false;
     MachineInfo_t best_machine;
+    MachineInfo_t possible_machine;
+
     TaskInfo_t task_info = GetTaskInfo(task_id);
     for (size_t i = 0; i < vms.size(); i++) {
         VMInfo_t vm_info = VM_GetInfo(vms[i]);
         if (vm_info.cpu == task_info.required_cpu && vm_info.vm_type == task_info.required_vm) {
             MachineInfo_t machine_info = Machine_GetInfo(vm_info.machine_id);
-            if (!found || best_machine.memory_used > machine_info.memory_used) {
+            if (!found_possible || possible_machine.memory_used * machine_info.memory_size > machine_info.memory_used * possible_machine.memory_size) {
+                possible_vm = vms[i];
+                possible_machine = machine_info;
+                found_possible = true;
+            }
+            if (!found_best || (best_machine.memory_used * machine_info.memory_size > machine_info.memory_used * best_machine.memory_size && machine_info.active_tasks < machine_info.num_cpus)) {
                 best_machine = machine_info;
                 best_vm = vms[i];
-                found = true;
+                found_best = true;
             }
         }
     }
-    VM_AddTask(best_vm, task_id, HIGH_PRIORITY);
+
+    if (!found_possible) {
+        cout << "NOT FOUND" << endl;
+        return;
+    }
+
+    VM_AddTask(found_best ? best_vm : possible_vm, task_id, HIGH_PRIORITY);
 }
 
 void Scheduler::PeriodicCheck(Time_t now) {
